@@ -1,3 +1,6 @@
+<!-- Comment out part one or two to see the solutions work. -->
+
+<!-- PART ONE HTML ----------------------------------------------------------------------->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,6 +44,57 @@
         })
         .catch(err => console.error('Error drawing card:', err));
     });
+  </script>
+</body>
+</html>
+
+<!-- PART TWO HTML ----------------------------------------------------------------------->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Draw Cards</title>
+</head>
+<body>
+  <button id="draw-card">Draw a Card</button>
+  <div id="cards"></div>
+
+  <script>
+    let deckId = null;
+
+    async function setupDeck() {
+      try {
+        const response = await fetch('https://deckofcardsapi.com/api/deck/new/shuffle/');
+        const data = await response.json();
+        deckId = data.deck_id;
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function drawCard() {
+      try {
+        if (!deckId) return;
+
+        const response = await fetch(`https://deckofcardsapi.com/api/deck/${deckId}/draw/?count=1`);
+        const data = await response.json();
+
+        if (data.remaining === 0) {
+          alert('No more cards in the deck!');
+          return;
+        }
+
+        const card = data.cards[0];
+        document.getElementById('cards').innerHTML += `<p>${card.value} of ${card.suit}</p>`;
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    document.getElementById('draw-card').addEventListener('click', drawCard);
+
+    setupDeck();
   </script>
 </body>
 </html>
