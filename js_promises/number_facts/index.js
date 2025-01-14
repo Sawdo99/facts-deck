@@ -1,4 +1,6 @@
+//Comment out part one or two to see the solutions work. 
 
+// PART ONE PROMISES ----------------------------------------------------------------
 // Single number 
 const favoriteNumber = 7;
 const url = `http://numbersapi.com/${favoriteNumber}?json`;
@@ -37,3 +39,57 @@ Promise.all(promises)
     });
   })
   .catch(err => console.error('Error fetching multiple facts:', err));
+
+// PART TWO ASYNC/await -------------------------------------------------------------
+
+// single Number: 
+const favoriteNumber = 7;
+const apiUrl = `http://numbersapi.com/${favoriteNumber}?json`;
+
+async function getFavoriteNumberFact() {
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    console.log(data.text); // Log the fact
+    document.body.innerHTML += `<p>${data.text}</p>`;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+getFavoriteNumberFact();
+
+// multiple Numbers:
+const numbers = [3, 7, 42];
+const apiUrlMulti = `http://numbersapi.com/${numbers.join(',')}?json`;
+
+async function getMultipleNumberFacts() {
+  try {
+    const response = await fetch(apiUrlMulti);
+    const data = await response.json();
+    Object.values(data).forEach(fact => {
+      document.body.innerHTML += `<p>${fact}</p>`;
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+getMultipleNumberFacts();
+
+// four facts about your fav number:
+async function getFourFacts() {
+  try {
+    const promises = Array(4)
+      .fill(apiUrl)
+      .map(url => fetch(url).then(res => res.json()));
+    const facts = await Promise.all(promises);
+    facts.forEach(fact => {
+      document.body.innerHTML += `<p>${fact.text}</p>`;
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+getFourFacts();
